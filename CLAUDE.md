@@ -116,18 +116,14 @@ links:
 
 ## 공개 저장소에 올리기
 
-이 폴더는 더 큰 저장소(`Python`) 안의 하위 폴더이고, 공개용 사본은 `https://github.com/arik08/Tech-Achieve` (원격 이름 `tech-achieve`)에 따로 있습니다. 사용자가 올리라고 할 때만 올립니다.
+이 폴더는 그 자체가 독립된 git 저장소이고, 원격 `origin`은 공개 저장소 `https://github.com/arik08/Tech-Achieve`입니다. 바깥 폴더(`Python`)의 저장소와는 무관하며, 그쪽에서는 이 폴더를 무시합니다. git 명령은 이 폴더 안에서 실행합니다.
 
-올릴 때는 이 폴더의 현재 내용만 커밋 하나로 만들어 공개 저장소의 `main` 뒤에 붙입니다. 큰 저장소의 이력이나 지운 문서는 따라가지 않습니다. 큰 저장소의 루트에서 실행합니다.
+- 평소 작업은 `work` 브랜치에 커밋합니다. 사용자가 올리라고 할 때만 `main`으로 올립니다.
 
 ```bash
-git fetch tech-achieve main
-TREE=$(git rev-parse HEAD:Tech-Achieve)
-E="48400468+arik08@users.noreply.github.com"
-NEW=$(GIT_AUTHOR_NAME=arik08 GIT_COMMITTER_NAME=arik08 GIT_AUTHOR_EMAIL="$E" GIT_COMMITTER_EMAIL="$E" git commit-tree "$TREE" -p tech-achieve/main -m "무엇을 넣고 뺐는지 한 줄")
-git push tech-achieve "$NEW":refs/heads/main
+git push origin work:main
 ```
 
-- 올리기 전에 먼저 이 폴더의 변경을 커밋합니다(위 명령은 커밋된 내용만 올립니다).
-- 공개 커밋의 이름은 `arik08`, 메일 주소는 GitHub의 noreply 주소를 씁니다. 실명과 개인 메일이 드러나지 않게 하기 위해서입니다.
+- 커밋의 이름은 `arik08`, 메일 주소는 GitHub의 noreply 주소를 씁니다(이 저장소의 `git config`에 넣어 두었습니다). 실명과 개인 메일이 드러나지 않게 하기 위해서입니다. 폴더를 새로 내려받았으면 `git config user.name`·`user.email`부터 확인합니다.
+- 커밋 이력이 그대로 공개되므로 커밋 메시지에도 개인 정보나 사내 내용을 쓰지 않습니다.
 - 공개되는 곳이므로 개인 메시지, 사내 자료, 연락처가 보이는 캡처는 `docs/img/`에 넣지 않습니다.
