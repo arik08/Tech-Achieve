@@ -1,0 +1,372 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>AI 기술 보관함</title>
+<style>
+:root {
+  --bg: #f6f7f9; --panel: #ffffff; --line: #e2e5ea; --text: #1c2026; --sub: #5b6470;
+  --accent: #2456d6; --accent-soft: #e8eefc; --chip: #eef0f3; --code: #f1f3f6;
+  --shadow: 0 1px 2px rgba(20,30,50,.06), 0 4px 14px rgba(20,30,50,.05); --danger: #c62828; --scroll: #c3c8d0;
+}
+@media (prefers-color-scheme: dark) {
+  :root {
+    --bg: #14171c; --panel: #1c2027; --line: #2c323c; --text: #e8ebf0; --sub: #9aa4b2;
+    --accent: #8fb0ff; --accent-soft: #24304d; --chip: #272d37; --code: #232830;
+    --shadow: 0 1px 2px rgba(0,0,0,.3); --danger: #ff8a80; --scroll: #3a424e;
+  }
+}
+:root { color-scheme: light dark; scrollbar-color: var(--scroll) transparent; }
+* { box-sizing: border-box; }
+html { font-size: 100%; }
+body {
+  margin: 0; background: var(--bg); color: var(--text);
+  font-family: Pretendard, "Malgun Gothic", "Apple SD Gothic Neo", system-ui, sans-serif;
+  font-size: 1rem; line-height: 1.7; word-break: keep-all; overflow-wrap: anywhere;
+}
+a { color: var(--accent); }
+button { font: inherit; color: inherit; cursor: pointer; }
+svg.lucide { width: 1.125rem; height: 1.125rem; flex: none; }
+
+.layout { display: grid; grid-template-columns: 17.5rem minmax(0, 1fr); min-height: 100vh; }
+.side {
+  position: sticky; top: 0; height: 100vh; overflow-y: auto;
+  padding: 1.5rem 1rem; background: var(--panel); border-right: 1px solid var(--line);
+}
+.brand { display: flex; align-items: center; gap: .5rem; margin: 0 .5rem 1.25rem; font-size: 1.125rem; font-weight: 700; }
+.brand a { color: inherit; text-decoration: none; display: flex; align-items: center; gap: .5rem; }
+.search { position: relative; margin-bottom: 1.25rem; }
+.search svg { position: absolute; left: .75rem; top: 50%; transform: translateY(-50%); color: var(--sub); }
+.search input {
+  width: 100%; padding: .625rem .75rem .625rem 2.5rem; font: inherit;
+  color: var(--text); background: var(--bg); border: 1px solid var(--line); border-radius: .5rem;
+}
+.search input:focus { outline: 2px solid var(--accent); outline-offset: 1px; }
+.side h2 { margin: 1.25rem .5rem .375rem; font-size: .8125rem; font-weight: 600; color: var(--sub); }
+.cat {
+  display: flex; align-items: center; justify-content: space-between; gap: .5rem; width: 100%;
+  padding: .5rem .75rem; border: 0; border-radius: .5rem; background: none; text-align: left; font-size: .9375rem;
+}
+.cat:hover { background: var(--chip); }
+.cat[aria-current="true"] { background: var(--accent-soft); color: var(--accent); font-weight: 600; }
+.cat .n { font-size: .8125rem; color: var(--sub); font-variant-numeric: tabular-nums; }
+.tags { display: flex; flex-wrap: wrap; gap: .375rem; padding: 0 .5rem; }
+.tag {
+  display: inline-flex; align-items: center; padding: .125rem .625rem; border: 1px solid transparent;
+  border-radius: 999px; background: var(--chip); color: var(--sub); font-size: .8125rem; text-decoration: none;
+}
+button.tag:hover { color: var(--text); }
+.tag[aria-pressed="true"] { background: var(--accent-soft); color: var(--accent); border-color: var(--accent); }
+.stamp { margin: 1.5rem .5rem 0; font-size: .8125rem; color: var(--sub); }
+
+.main { padding: 2rem 2.5rem 4rem; min-width: 0; }
+.head { display: flex; align-items: baseline; gap: .75rem; margin-bottom: 1.25rem; }
+.head h1 { margin: 0; font-size: 1.5rem; line-height: 1.3; }
+.head .n { color: var(--sub); font-size: .875rem; }
+.group { margin: 2rem 0 .75rem; font-size: 1.0625rem; font-weight: 700; }
+.group:first-of-type { margin-top: 0; }
+.grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(19rem, 1fr)); gap: 1rem; }
+.card {
+  display: flex; flex-direction: column; overflow: hidden; background: var(--panel);
+  border: 1px solid var(--line); border-radius: .75rem; box-shadow: var(--shadow);
+  color: inherit; text-decoration: none; transition: border-color .15s, transform .15s;
+}
+.card:hover { border-color: var(--accent); transform: translateY(-2px); }
+.card:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+.thumb { aspect-ratio: 16 / 9; width: 100%; object-fit: cover; background: var(--chip); border-bottom: 1px solid var(--line); }
+.card-body { display: flex; flex-direction: column; gap: .5rem; padding: 1rem 1.125rem 1.125rem; flex: 1; }
+.card h3 { margin: 0; font-size: 1.0625rem; line-height: 1.45; }
+.card p { margin: 0; color: var(--sub); font-size: .9375rem; line-height: 1.6;
+  display: -webkit-box; -webkit-line-clamp: 3; -webkit-box-orient: vertical; overflow: hidden; }
+.meta { display: flex; flex-wrap: wrap; align-items: center; gap: .375rem .625rem; margin-top: auto; padding-top: .375rem;
+  font-size: .8125rem; color: var(--sub); }
+.meta .kinds { display: inline-flex; gap: .375rem; margin-left: auto; }
+.meta .kinds svg { width: 1rem; height: 1rem; }
+.empty { padding: 3rem 1rem; text-align: center; color: var(--sub); border: 1px dashed var(--line); border-radius: .75rem; }
+
+.back { display: inline-flex; align-items: center; gap: .375rem; margin-bottom: 1.25rem; padding: .375rem .75rem .375rem .5rem;
+  border: 1px solid var(--line); border-radius: .5rem; background: var(--panel); font-size: .875rem; text-decoration: none; color: var(--text); }
+.back:hover { border-color: var(--accent); }
+.doc { max-width: 52rem; }
+.doc-top { display: flex; align-items: flex-start; justify-content: space-between; gap: 1rem; }
+.icon-btn { display: inline-flex; align-items: center; justify-content: center; width: 2.25rem; height: 2.25rem;
+  border: 1px solid var(--line); border-radius: .5rem; background: var(--panel); color: var(--sub); }
+.icon-btn:hover { color: var(--text); border-color: var(--sub); }
+.icon-btn:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+.icon-btn.warn { color: var(--danger); border-color: var(--danger); }
+.icon-btn[disabled] { opacity: .5; cursor: default; }
+.tip { position: fixed; z-index: 10; padding: .25rem .625rem; border-radius: .375rem; background: var(--text); color: var(--bg);
+  font-size: .8125rem; line-height: 1.5; pointer-events: none; white-space: nowrap; }
+.notice { margin: 0 0 1rem; padding: .625rem .875rem; border: 1px solid var(--line); border-radius: .5rem; background: var(--panel); font-size: .9375rem; }
+.doc-head h1 { margin: .25rem 0 .5rem; font-size: 1.875rem; line-height: 1.3; }
+.doc-head .lead { margin: 0 0 .75rem; color: var(--sub); font-size: 1.0625rem; }
+.doc-meta { display: flex; flex-wrap: wrap; align-items: center; gap: .5rem; font-size: .875rem; color: var(--sub); }
+.links { display: flex; flex-wrap: wrap; gap: .5rem; margin: 1.25rem 0 0; padding: 0; list-style: none; }
+.links a {
+  display: inline-flex; align-items: center; gap: .5rem; padding: .5rem .875rem; border: 1px solid var(--line);
+  border-radius: .5rem; background: var(--panel); color: var(--text); font-size: .9375rem; font-weight: 600; text-decoration: none;
+}
+.links a:hover { border-color: var(--accent); color: var(--accent); }
+.links small { font-weight: 400; font-size: .8125rem; color: var(--sub); }
+.path { margin-top: .75rem; font-size: .8125rem; color: var(--sub); }
+.path code { font-size: .8125rem; }
+.md { margin-top: 1.5rem; padding-top: 1.5rem; border-top: 1px solid var(--line); }
+.md h1 { font-size: 1.5rem; } .md h2 { font-size: 1.3125rem; margin-top: 2.25rem; } .md h3 { font-size: 1.125rem; margin-top: 1.75rem; }
+.md h1, .md h2, .md h3, .md h4 { line-height: 1.4; }
+.md img { max-width: 100%; height: auto; border: 1px solid var(--line); border-radius: .5rem; }
+.md .img-missing { display: inline-block; padding: .25rem .625rem; border: 1px dashed var(--line); border-radius: .5rem; font-size: .875rem; }
+.md pre { padding: 1rem; overflow-x: auto; background: var(--code); border-radius: .5rem; }
+.md code { font-family: "Cascadia Code", Consolas, "D2Coding", monospace; font-size: .9375rem; }
+.md :not(pre) > code { padding: .125rem .375rem; background: var(--code); border-radius: .25rem; }
+.md table { display: block; overflow-x: auto; border-collapse: collapse; font-size: .9375rem; }
+.md th, .md td { padding: .5rem .75rem; border: 1px solid var(--line); text-align: left; vertical-align: top; }
+.md th { background: var(--chip); }
+.md blockquote { margin: 1rem 0; padding: .25rem 1rem; border-left: 3px solid var(--accent); color: var(--sub); }
+.md li { margin: .25rem 0; }
+
+@media (max-width: 52rem) {
+  .layout { grid-template-columns: 1fr; }
+  .side { position: static; height: auto; border-right: 0; border-bottom: 1px solid var(--line); }
+  .main { padding: 1.25rem 1rem 3rem; }
+}
+</style>
+</head>
+<body>
+<div class="layout">
+  <aside class="side">
+    <div class="brand"><a href="#/"><i data-lucide="library"></i>AI 기술 보관함</a></div>
+    <label class="search">
+      <i data-lucide="search"></i>
+      <input id="q" type="search" placeholder="제목·내용·태그 검색" aria-label="검색" autocomplete="off">
+    </label>
+    <h2>분류</h2>
+    <nav id="cats" aria-label="분류"></nav>
+    <h2>태그</h2>
+    <div id="tags" class="tags"></div>
+    <p id="stamp" class="stamp"></p>
+  </aside>
+  <main id="main" class="main"></main>
+</div>
+
+<script src="vendor/marked.umd.js"></script>
+<script src="vendor/purify.min.js"></script>
+<script src="vendor/lucide.min.js"></script>
+<script src="data.js"></script>
+<script>
+(() => {
+  const archive = window.ARCHIVE || { docs: [], generated: "" };
+  const docs = archive.docs;
+  const state = { cat: "", tag: "", q: "" };
+  let canDelete = false;
+  const $ = (id) => document.getElementById(id);
+  const esc = (s) => String(s ?? "").replace(/[&<>"']/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]));
+  const safeUrl = (u) => (/^https?:\/\//i.test(u) ? u : "#");
+  const assetUrl = (u) => (/^(https?:)?\/\/|^data:/i.test(u) ? u : "docs/" + u);
+  const icons = () => lucide.createIcons();
+
+  // 링크 종류를 주소와 이름으로 가려 아이콘을 고른다
+  function linkKind(l) {
+    const s = (l.label + " " + l.url).toLowerCase();
+    let host = "";
+    try { host = new URL(l.url).hostname.replace(/^www\./, ""); } catch {}
+    if (/github\.com|gitlab\.com|codeberg\.org|저장소|소스/.test(s)) return { icon: "git-branch", name: "코드 저장소", host };
+    if (/arxiv\.org|openreview|논문|paper/.test(s)) return { icon: "file-text", name: "논문", host };
+    if (/huggingface\.co|모델|model|데이터셋/.test(s)) return { icon: "package", name: "모델·데이터", host };
+    if (/docs?\.|문서|가이드|guide|documentation/.test(s)) return { icon: "book-open", name: "문서", host };
+    if (/youtube|youtu\.be|데모|demo|영상|playground/.test(s)) return { icon: "play", name: "데모·영상", host };
+    return { icon: "globe", name: "사이트", host };
+  }
+
+  function matches(d) {
+    if (state.cat && d.category !== state.cat) return false;
+    if (state.tag && !d.tags.includes(state.tag)) return false;
+    const terms = state.q.toLowerCase().split(/\s+/).filter(Boolean);
+    if (!terms.length) return true;
+    const hay = [d.title, d.summary, d.category, d.released, d.tags.join(" "), d.links.map((l) => l.label + " " + l.url).join(" "), d.body].join("\n").toLowerCase();
+    return terms.every((t) => hay.includes(t));
+  }
+
+  function renderSide() {
+    const counts = new Map();
+    docs.forEach((d) => counts.set(d.category, (counts.get(d.category) || 0) + 1));
+    const cats = [...counts.keys()].sort((a, b) => a.localeCompare(b, "ko"));
+    $("cats").innerHTML =
+      `<button class="cat" data-cat="" aria-current="${state.cat === ""}"><span>전체</span><span class="n">${docs.length}</span></button>` +
+      cats.map((c) => `<button class="cat" data-cat="${esc(c)}" aria-current="${state.cat === c}"><span>${esc(c)}</span><span class="n">${counts.get(c)}</span></button>`).join("");
+    const tagCounts = new Map();
+    docs.filter((d) => !state.cat || d.category === state.cat).forEach((d) => d.tags.forEach((t) => tagCounts.set(t, (tagCounts.get(t) || 0) + 1)));
+    const tags = [...tagCounts.entries()].sort((a, b) => b[1] - a[1] || a[0].localeCompare(b[0], "ko")).slice(0, 40);
+    $("tags").innerHTML = tags.length
+      ? tags.map(([t]) => `<button class="tag" data-tag="${esc(t)}" aria-pressed="${state.tag === t}">${esc(t)}</button>`).join("")
+      : `<span class="stamp" style="margin:0">아직 태그가 없습니다</span>`;
+    $("stamp").textContent = archive.generated ? `색인 갱신 ${archive.generated}` : "";
+  }
+
+  function card(d) {
+    const kinds = [...new Set(d.links.map((l) => linkKind(l).icon))];
+    return `<a class="card" href="#/doc/${encodeURIComponent(d.id)}">
+      ${d.cover ? `<img class="thumb" src="${esc(assetUrl(d.cover))}" alt="" loading="lazy" referrerpolicy="no-referrer" onerror="this.remove()">` : ""}
+      <div class="card-body">
+        <h3>${esc(d.title)}</h3>
+        <p>${esc(d.summary)}</p>
+        <div class="meta">
+          <span>${d.released ? "공개 " + esc(d.released) : "공개 시기 미확인"}</span>
+          <span>확인 ${esc(d.checked)}</span>
+          ${d.tags.slice(0, 2).map((t) => `<span class="tag">${esc(t)}</span>`).join("")}
+          ${kinds.length ? `<span class="kinds" aria-label="바로가기 링크 ${d.links.length}개">${kinds.map((k) => `<i data-lucide="${k}"></i>`).join("")}</span>` : ""}
+        </div>
+      </div></a>`;
+  }
+
+  function renderList() {
+    const list = docs.filter(matches);
+    const title = state.cat || "전체";
+    let html = `<div class="head"><h1>${esc(title)}</h1><span class="n">${list.length}건${state.tag ? ` · 태그 ${esc(state.tag)}` : ""}${state.q ? ` · 검색 "${esc(state.q)}"` : ""}</span></div>`;
+    if (!docs.length) {
+      html += `<div class="empty">아직 문서가 없습니다. 글이나 캡처를 AI에게 주고 정리해 달라고 하면 여기에 쌓입니다.</div>`;
+    } else if (!list.length) {
+      html += `<div class="empty">조건에 맞는 문서가 없습니다.</div>`;
+    } else if (state.cat) {
+      html += `<div class="grid">${list.map(card).join("")}</div>`;
+    } else {
+      const groups = new Map();
+      list.forEach((d) => groups.set(d.category, [...(groups.get(d.category) || []), d]));
+      [...groups.keys()].sort((a, b) => a.localeCompare(b, "ko")).forEach((c) => {
+        html += `<h2 class="group">${esc(c)}</h2><div class="grid">${groups.get(c).map(card).join("")}</div>`;
+      });
+    }
+    $("main").innerHTML = html;
+    document.title = "AI 기술 보관함";
+    icons();
+  }
+
+  function renderDoc(id) {
+    const d = docs.find((x) => x.id === id);
+    if (!d) { $("main").innerHTML = `<a class="back" href="#/"><i data-lucide="arrow-left"></i>목록</a><div class="empty">문서를 찾을 수 없습니다.</div>`; icons(); return; }
+    const links = d.links.map((l) => {
+      const k = linkKind(l);
+      return `<li><a href="${esc(safeUrl(l.url))}" target="_blank" rel="noopener noreferrer"><i data-lucide="${k.icon}"></i><span>${esc(l.label)}</span>${k.host ? `<small>${esc(k.host)}</small>` : ""}</a></li>`;
+    }).join("");
+    const body = d.body.replace(/^#\s+.*\r?\n+/, ""); // 본문 첫 제목은 머리말과 겹치므로 뺀다
+    const html = DOMPurify.sanitize(marked.parse(body, { gfm: true }));
+    $("main").innerHTML = `<article class="doc">
+      <div class="doc-top">
+        <a class="back" href="#/"><i data-lucide="arrow-left"></i>목록</a>
+        ${canDelete ? `<button class="icon-btn" id="del" type="button" aria-label="삭제" data-tip="삭제"><i data-lucide="trash-2"></i></button>` : ""}
+      </div>
+      <div id="notice"></div>
+      <header class="doc-head">
+        <div class="doc-meta"><span class="tag">${esc(d.category)}</span><span>${d.released ? "공개 " + esc(d.released) : "공개 시기 미확인"}</span><span>확인 ${esc(d.checked)}</span><span>보관 ${esc(d.date)}</span>${d.tags.map((t) => `<span class="tag">${esc(t)}</span>`).join("")}</div>
+        <h1>${esc(d.title)}</h1>
+        <p class="lead">${esc(d.summary)}</p>
+        ${d.origin ? `<div class="doc-meta"><i data-lucide="link"></i><span>처음 본 곳</span><a href="${esc(safeUrl(d.origin))}" target="_blank" rel="noopener noreferrer">${esc(d.origin)}</a></div>` : ""}
+        ${links ? `<ul class="links" aria-label="바로가기">${links}</ul>` : ""}
+        <div class="path">파일 <code>${esc(d.path)}</code></div>
+      </header>
+      <div class="md" id="md">${html}</div>
+    </article>`;
+    const md = $("md");
+    md.querySelectorAll("img").forEach((img) => {
+      const src = img.getAttribute("src") || "";
+      img.referrerPolicy = "no-referrer"; img.loading = "lazy";
+      img.src = assetUrl(src);
+      img.addEventListener("error", () => {
+        const a = document.createElement("a");
+        a.className = "img-missing"; a.href = img.src; a.target = "_blank"; a.rel = "noopener noreferrer";
+        a.textContent = "이미지 열기: " + (img.alt || src);
+        img.replaceWith(a);
+      });
+    });
+    md.querySelectorAll("a[href]").forEach((a) => {
+      const href = a.getAttribute("href");
+      const local = href.match(/^(?:\.\/)?([^\/#?:]+)\.md(?:#.*)?$/);
+      if (local) a.setAttribute("href", "#/doc/" + local[1]);
+      else if (/^https?:/i.test(href)) { a.target = "_blank"; a.rel = "noopener noreferrer"; }
+      else if (!href.startsWith("#")) a.setAttribute("href", assetUrl(href));
+    });
+    document.title = d.title + " · AI 기술 보관함";
+    window.scrollTo(0, 0);
+    icons();
+    if (canDelete) armDelete($("del"), d);
+  }
+
+  // 삭제: 휴지통 → 경고 아이콘 → 한 번 더 누르면 지운다. 확인 창은 띄우지 않는다.
+  function armDelete(btn, d) {
+    let timer = 0;
+    const set = (warn) => {
+      clearTimeout(timer);
+      btn.classList.toggle("warn", warn);
+      btn.dataset.tip = warn ? "삭제 경고" : "삭제";
+      btn.setAttribute("aria-label", warn ? "삭제 경고: 한 번 더 누르면 지웁니다" : "삭제");
+      btn.innerHTML = `<i data-lucide="${warn ? "triangle-alert" : "trash-2"}"></i>`;
+      icons();
+      if (warn) timer = setTimeout(() => set(false), 4000);
+    };
+    btn.addEventListener("blur", () => { if (btn.classList.contains("warn")) set(false); });
+    btn.addEventListener("click", async () => {
+      hideTip();
+      if (!btn.classList.contains("warn")) return set(true);
+      clearTimeout(timer);
+      btn.disabled = true;
+      try {
+        const res = await fetch("api/delete", { method: "POST", headers: { "Content-Type": "application/json", "X-Archive": "1" }, body: JSON.stringify({ id: d.id }) });
+        const out = await res.json().catch(() => ({}));
+        if (!res.ok || !out.ok) throw new Error(out.error || "서버가 요청을 처리하지 못했습니다");
+        docs.splice(docs.indexOf(d), 1);
+        location.hash = "#/";
+      } catch (err) {
+        btn.disabled = false; set(false);
+        $("notice").innerHTML = `<p class="notice" role="alert">지우지 못했습니다. ${esc(err.message)}</p>`;
+      }
+    });
+  }
+
+  // 앱 툴팁: 1초 이상 올려 두었을 때만 뜬다
+  let tipEl = null, tipTimer = 0;
+  function hideTip() { clearTimeout(tipTimer); if (tipEl) { tipEl.remove(); tipEl = null; } }
+  document.addEventListener("mouseover", (e) => {
+    const t = e.target.closest?.("[data-tip]");
+    if (!t || t.contains(e.relatedTarget)) return;
+    hideTip();
+    tipTimer = setTimeout(() => {
+      if (!t.isConnected) return;
+      tipEl = document.createElement("div");
+      tipEl.className = "tip"; tipEl.setAttribute("role", "tooltip"); tipEl.textContent = t.dataset.tip;
+      document.body.appendChild(tipEl);
+      const r = t.getBoundingClientRect(), w = tipEl.offsetWidth;
+      tipEl.style.left = Math.max(8, Math.min(innerWidth - w - 8, r.left + r.width / 2 - w / 2)) + "px";
+      tipEl.style.top = r.bottom + 6 + "px";
+    }, 1000);
+  });
+  document.addEventListener("mouseout", (e) => {
+    const t = e.target.closest?.("[data-tip]");
+    if (t && !t.contains(e.relatedTarget)) hideTip();
+  });
+
+  function route() {
+    const m = location.hash.match(/^#\/doc\/(.+)$/);
+    renderSide();
+    if (m) renderDoc(decodeURIComponent(m[1])); else renderList();
+  }
+  function toList() { if (location.hash.startsWith("#/doc/")) location.hash = "#/"; else route(); }
+
+  $("cats").addEventListener("click", (e) => {
+    const b = e.target.closest("[data-cat]"); if (!b) return;
+    state.cat = b.dataset.cat; state.tag = ""; toList();
+  });
+  $("tags").addEventListener("click", (e) => {
+    const b = e.target.closest("[data-tag]"); if (!b) return;
+    state.tag = state.tag === b.dataset.tag ? "" : b.dataset.tag; toList();
+  });
+  $("q").addEventListener("input", (e) => { state.q = e.target.value.trim(); toList(); });
+  window.addEventListener("hashchange", route);
+  route();
+  // serve.py 로 열었을 때만 삭제 버튼을 보인다 (파일을 직접 열면 지울 방법이 없다)
+  if (location.protocol.startsWith("http")) {
+    fetch("api/ping").then((r) => (r.ok ? r.json() : null)).then((j) => { if (j && j.ok) { canDelete = true; route(); } }).catch(() => {});
+  }
+})();
+</script>
+</body>
+</html>
