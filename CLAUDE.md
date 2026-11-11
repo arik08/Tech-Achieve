@@ -123,10 +123,11 @@ links:
 ```bash
 git fetch tech-achieve main
 TREE=$(git rev-parse HEAD:Tech-Achieve)
-NEW=$(GIT_AUTHOR_EMAIL="48400468+arik08@users.noreply.github.com" GIT_COMMITTER_EMAIL="48400468+arik08@users.noreply.github.com" git commit-tree "$TREE" -p tech-achieve/main -m "무엇을 넣고 뺐는지 한 줄")
+E="48400468+arik08@users.noreply.github.com"
+NEW=$(GIT_AUTHOR_NAME=arik08 GIT_COMMITTER_NAME=arik08 GIT_AUTHOR_EMAIL="$E" GIT_COMMITTER_EMAIL="$E" git commit-tree "$TREE" -p tech-achieve/main -m "무엇을 넣고 뺐는지 한 줄")
 git push tech-achieve "$NEW":refs/heads/main
 ```
 
 - 올리기 전에 먼저 이 폴더의 변경을 커밋합니다(위 명령은 커밋된 내용만 올립니다).
-- 공개 커밋의 메일 주소는 GitHub의 noreply 주소를 씁니다. 개인 메일이 드러나지 않게 하기 위해서입니다.
+- 공개 커밋의 이름은 `arik08`, 메일 주소는 GitHub의 noreply 주소를 씁니다. 실명과 개인 메일이 드러나지 않게 하기 위해서입니다.
 - 공개되는 곳이므로 개인 메시지, 사내 자료, 연락처가 보이는 캡처는 `docs/img/`에 넣지 않습니다.
